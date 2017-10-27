@@ -2,7 +2,6 @@
 
 class Model
 {
-
     public $model;
     public $db;
     public $logger;
@@ -12,14 +11,32 @@ class Model
      */
     public function __construct()
     {
-        $config = require(__DIR__ . '/../../config/config.php');
-        $database = $config['database'];
-        $this->db = new mysqli($database['host'], $database['user'], $database['password'], $database['database']);
+        $this->setConnectDb();
+        $this->logger = new Katzgrau\KLogger\Logger(__DIR__.'/../logs');
+    }
+
+    /**
+     * Set connect to DataBase
+     */
+    private function setConnectDb()
+    {
+        global $connectDB;
+
+        if (empty($connectDB)) {
+            $config    = require(__DIR__ . '/../../config/config.php');
+            $database  = $config['database'];
+            $connectDB = new mysqli(
+                $database['host'],
+                $database['user'],
+                $database['password'],
+                $database['database']
+            );
+        }
+        $this->db = $connectDB;
         if ($this->db->connect_errno) {
             printf("Соединение не удалось: %s\n", $this->db->connect_error);
             exit();
         }
-        $this->logger = new Katzgrau\KLogger\Logger(__DIR__.'/../logs');
     }
 
     /**
@@ -48,7 +65,7 @@ class Model
     {
         $returnResult = [];
         $this->db->begin_transaction(MYSQLI_TRANS_START_READ_ONLY);
-        $result = $this->db->query($sql, MYSQLI_USE_RESULT);
+        $result       = $this->db->query($sql, MYSQLI_USE_RESULT);
         if ($result) {
             while ($row = $result->fetch_object()) {
                 $returnResult[] = $row;
@@ -56,6 +73,7 @@ class Model
             $result->close();
         }
         $this->db->commit();
+
 
         return $returnResult;
     }
@@ -66,7 +84,7 @@ class Model
      */
     public function updateAllTransaction($table, array $params)
     {
-        $this->db->autocommit(FALSE);
+        $this->db->begin_transaction(MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);
         foreach ($params as $id => $param) {
             $sql           = 'UPDATE ' . $table . ' SET ';
             $sqlParamArray = $this->getParamSqlQuryArray($param);
