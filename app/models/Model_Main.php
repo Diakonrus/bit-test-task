@@ -36,10 +36,11 @@ class Model_Main extends Model
             'params' => $params
         ]);
 
-        $params = $this->validateFinanceParam($params);
+        $this->processingFinanceParam($params);
         if (! empty($this->errorLog)) {
             return false;
         }
+
         if (! $this->updateAllTransaction(self::TABLE_NAME, $params)) {
             $this->errorLog[] = 'Ошибка при выполнении списания средств! Операция отменена, средства не списаны.';
             $this->logger->error('Ошибка транзакции при попытке списания средств.', [
@@ -61,16 +62,13 @@ class Model_Main extends Model
      * @param array $params
      * @return array
      */
-    private function validateFinanceParam(array $params)
+    private function processingFinanceParam(array &$params)
     {
         $errorLog = [];
         foreach ($params as $id => $value) {
             $sum = trim($value['sum']);
             $sum = str_replace(',', '.', $sum);
-            if (empty($sum)) {
-                unset($params[$id]);
-                continue;
-            }
+
             $result = $this->find(self::TABLE_NAME, [
                 'id'      => $id,
                 'user_id' => $this->userID,
@@ -106,5 +104,3 @@ class Model_Main extends Model
         return $params;
     }
 }
-
-?>

@@ -22,7 +22,7 @@
                     <?=$finance->sum;?> <?=Model_Main::$currencyLists[$finance->currency_id];?>
                 </b>:
             </label>
-            <input name="Finances[<?=$finance->id;?>][sum]" type="text" placeholder="Введите сумму для списания">
+            <input name="Finances[<?=$finance->id;?>][sum]" type="text" placeholder="Введите сумму для списания" value="0">
             <span class="help-block">
                 Доступно для списания
                 <?=$finance->sum;?> <?=Model_Main::$currencyLists[$finance->currency_id];?>

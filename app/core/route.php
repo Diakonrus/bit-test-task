@@ -23,13 +23,12 @@ class Route {
         $action_name = 'action_' . ucfirst($action_name);
 
         $model_file = $model_name . '.php';
-        $model_path = "app/models/" . $model_name . '.php';
 
         $controller_file = $controller_name . '.php';
-        $controller_path = "app/controllers/" . $controller_file;
+        $controller_path = __DIR__ . "/../controllers/" . $controller_file;
 
         if (file_exists($controller_path)) {
-            include "app/controllers/" . $controller_file;
+            include $controller_path;
         } else {
             Route::ErrorPage404();
         }
@@ -39,10 +38,18 @@ class Route {
         $action = $action_name;
 
         if (method_exists($controller, $action)) {
-            include "app/models/" . $model_file;
+            include __DIR__ .  "/../models/" . $model_file;
             $controller->model = new $model_name;
             $controller->$action();
         }
     }
+
+    /**
+     * 404 Redirect
+     */
+    public static function ErrorPage404()
+    {
+        header('Location: /main/404');
+        exit();
+    }
 }
-?>

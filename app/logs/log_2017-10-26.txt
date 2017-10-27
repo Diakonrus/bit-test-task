@@ -90,3 +90,87 @@
 [2017-10-26 14:49:48.107762] [info] Средства успешно списаны
     userID: '1'
     params: array()
+[2017-10-26 14:53:20.020404] [info] Пользователь авторизован.
+    id: '1'
+    email: 'spn@mail.ru'
+[2017-10-26 14:53:32.248049] [info] Поступил запрос на списание средств
+    userID: '1'
+    params: array(
+        1 => array(
+            'sum' => 'sfddfsdfsdf',
+        ),
+        2 => array(
+            'sum' => 'vsvsdvsdv',
+        ),
+        3 => array(
+            'sum' => 'sdvsvsdv',
+        ),
+    )
+[2017-10-26 14:53:32.249300] [error] Ошибка при попытке списания средств
+    userID: '1'
+    msg: 'Для счета 1 указана неверная сумма списания!'
+    params: array(
+        1 => array(
+            'sum' => 'sfddfsdfsdf',
+        ),
+        2 => array(
+            'sum' => 'vsvsdvsdv',
+        ),
+        3 => array(
+            'sum' => 'sdvsvsdv',
+        ),
+    )
+[2017-10-26 14:53:32.249779] [error] Ошибка при попытке списания средств
+    userID: '1'
+    msg: 'Для счета 2 указана неверная сумма списания!'
+    params: array(
+        1 => array(
+            'sum' => 'sfddfsdfsdf',
+        ),
+        2 => array(
+            'sum' => 'vsvsdvsdv',
+        ),
+        3 => array(
+            'sum' => 'sdvsvsdv',
+        ),
+    )
+[2017-10-26 14:53:32.250211] [error] Ошибка при попытке списания средств
+    userID: '1'
+    msg: 'Для счета 3 указана неверная сумма списания!'
+    params: array(
+        1 => array(
+            'sum' => 'sfddfsdfsdf',
+        ),
+        2 => array(
+            'sum' => 'vsvsdvsdv',
+        ),
+        3 => array(
+            'sum' => 'sdvsvsdv',
+        ),
+    )
+[2017-10-26 14:53:54.754288] [info] Поступил запрос на списание средств
+    userID: '1'
+    params: array(
+        1 => array(
+            'sum' => '1000',
+        ),
+        2 => array(
+            'sum' => '44.41',
+        ),
+        3 => array(
+            'sum' => '90,50',
+        ),
+    )
+[2017-10-26 14:53:54.759793] [info] Средства успешно списаны
+    userID: '1'
+    params: array(
+        1 => array(
+            'sum' => 22000.0,
+        ),
+        2 => array(
+            'sum' => 200.0,
+        ),
+        3 => array(
+            'sum' => 599.5,
+        ),
+    )

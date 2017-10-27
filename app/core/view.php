@@ -15,7 +15,7 @@ class View {
         if (is_array($data)) {
             extract($data);
         }
-        include 'app/views/templates/' . $template_view;
+        include __DIR__ . '/../views/templates/' . $template_view;
     }
 
 

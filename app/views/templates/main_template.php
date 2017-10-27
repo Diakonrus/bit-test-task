@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="content">
-            <?php include 'app/views/' . $content_view; ?>
+            <?php include __DIR__. '/../' . $content_view; ?>
         </div>
     </body>
 </html>

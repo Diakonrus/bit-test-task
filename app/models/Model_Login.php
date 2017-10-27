@@ -8,12 +8,26 @@ class Model_Login extends Model
     public $password;
 
     /**
+     * @param $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = trim($email);
+    }
+
+    /**
+     * @param $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = md5($password);
+    }
+
+    /**
      * @return bool
      */
     public function auth()
     {
-        $this->email    = trim($this->email);
-        $this->password = md5($this->password);
         $paramAuth      = [
             'email'    => $this->email,
             'password' => $this->password,
@@ -37,5 +51,3 @@ class Model_Login extends Model
         return true;
     }
 }
-
-?>

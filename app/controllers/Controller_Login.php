@@ -6,8 +6,8 @@ Class Controller_Login extends Controller
     {
         if (! empty($_POST['User'])) {
             $model = new Model_Login();
-            $model->email = $_POST['User']['email'];
-            $model->password = $_POST['User']['password'];
+            $model->setEmail($_POST['User']['email']);
+            $model->setPassword($_POST['User']['password']);
             if ($model->auth()) {
                 header("Location: /");
             }
@@ -16,5 +16,3 @@ Class Controller_Login extends Controller
         $this->view->render('login.php', 'main_template.php');
     }
 }
-
-?>

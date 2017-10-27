@@ -2,13 +2,6 @@
 
 Class Controller_Main extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
-
-    }
-
-
     public function action_index()
     {
         session_start();
@@ -33,6 +26,10 @@ Class Controller_Main extends Controller
             'operationInfo' => $operationInfo,
         ]);
     }
-}
 
-?>
+    public function action_404()
+    {
+        header("HTTP/1.0 404 Not Found");
+        $this->view->render('404.php', 'main_template.php');
+    }
+}
