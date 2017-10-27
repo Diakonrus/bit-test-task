@@ -41,7 +41,7 @@ class Model_Main extends Model
             return false;
         }
 
-        if (! $this->updateAllTransaction(self::TABLE_NAME, $params)) {
+        if (! $this->updateFinances(self::TABLE_NAME, $params)) {
             $this->errorLog[] = 'Ошибка при выполнении списания средств! Операция отменена, средства не списаны.';
             $this->logger->error('Ошибка транзакции при попытке списания средств.', [
                 'userID' => $this->userID,
@@ -66,9 +66,7 @@ class Model_Main extends Model
     {
         $errorLog = [];
         foreach ($params as $id => $value) {
-            $sum = trim($value['sum']);
-            $sum = str_replace(',', '.', $sum);
-
+            $sum    = trim($value['sum']);
             $result = $this->find(self::TABLE_NAME, [
                 'id'      => $id,
                 'user_id' => $this->userID,
@@ -83,10 +81,11 @@ class Model_Main extends Model
                 ]);
                 continue;
             }
+
             $accountSum = current($result);
             $accountSum = $accountSum->sum;
 
-            if (! is_numeric($sum) || $sum < 0 || $accountSum - $sum < 0) {
+            if (! ctype_digit($sum) || $sum < 0 || $accountSum - $sum < 0) {
                 $msg        = "Для счета $id указана неверная сумма списания!";
                 $errorLog[] = $msg;
                 $this->logger->error('Ошибка при попытке списания средств', [
@@ -96,8 +95,7 @@ class Model_Main extends Model
                 ]);
                 continue;
             }
-            $sum = (float)$sum;
-            $params[$id]['sum'] = $accountSum - $sum;
+            $params[$id] = (int)$sum;
         }
 
         $this->errorLog = $errorLog;

@@ -64,7 +64,6 @@ class Model
     public function exeSql($sql)
     {
         $returnResult = [];
-        $this->db->begin_transaction(MYSQLI_TRANS_START_READ_ONLY);
         $result       = $this->db->query($sql, MYSQLI_USE_RESULT);
         if ($result) {
             while ($row = $result->fetch_object()) {
@@ -72,11 +71,33 @@ class Model
             }
             $result->close();
         }
-        $this->db->commit();
-
 
         return $returnResult;
     }
+
+    /**
+     * Withdraws funds from the account
+     *
+     * @param $table
+     * @param array $params
+     * @return bool
+     */
+    public function updateFinances($table, array $params)
+    {
+        $this->db->begin_transaction(MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);
+        foreach ($params as $id => $sum) {
+            $sql = 'UPDATE ' . $table . ' SET `sum` = IF (`sum`-' . $sum . ' < 0, `sum`, `sum`-' . $sum . ')';
+            $sql .= ' WHERE id="' . $this->escapeString($id) . '";' . "\n";
+            $this->db->query($sql);
+        }
+
+        if (! $this->db->commit()) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * @param $table
