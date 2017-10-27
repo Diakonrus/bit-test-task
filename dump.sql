@@ -15,7 +15,7 @@
 CREATE TABLE IF NOT EXISTS `finances` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
-  `sum` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `sum` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
   `currency_id` tinyint(2) unsigned NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -23,13 +23,13 @@ CREATE TABLE IF NOT EXISTS `finances` (
   CONSTRAINT `FK_finances_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы test.finances: ~1 rows (приблизительно)
+-- Дамп данных таблицы test.finances: ~3 rows (приблизительно)
 DELETE FROM `finances`;
 /*!40000 ALTER TABLE `finances` DISABLE KEYS */;
 INSERT INTO `finances` (`id`, `user_id`, `sum`, `currency_id`, `created_at`) VALUES
-	(1, 1, 23000.00, 0, '2017-10-26 11:37:57'),
-	(2, 1, 244.41, 1, '2017-10-26 11:37:57'),
-	(3, 1, 690.00, 2, '2017-10-26 11:37:57');
+	(1, 1, 20950.00, 0, '2017-10-26 11:37:57'),
+	(2, 1, 89.50, 1, '2017-10-26 11:37:57'),
+	(3, 1, 225.00, 2, '2017-10-26 11:37:57');
 /*!40000 ALTER TABLE `finances` ENABLE KEYS */;
 
 -- Дамп структуры для таблица test.users
