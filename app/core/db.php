@@ -28,7 +28,7 @@ class DB
      */
     private function __construct()
     {
-        $config = require(__DIR__ . '/../../config/config.php');
+        $config   = require(__DIR__ . '/../../config/config.php');
         $database = $config['database'];
 
         $this->_connection = new mysqli(
