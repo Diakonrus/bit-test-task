@@ -85,8 +85,7 @@ class Model_Main extends Model
             $accountSum = current($result);
             $accountSum = $accountSum->sum;
 
-            //if (! ctype_digit($sum) || $sum < 0 || $accountSum - $sum < 0) {
-            if (! ctype_digit($sum) || $sum < 0) {
+            if (! ctype_digit($sum) || $sum < 0 || $accountSum - $sum < 0) {
                 $msg        = "Для счета $id указана неверная сумма списания!";
                 $errorLog[] = $msg;
                 $this->logger->error('Ошибка при попытке списания средств', [
