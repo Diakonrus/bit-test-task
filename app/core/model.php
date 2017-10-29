@@ -2,8 +2,8 @@
 
 class Model
 {
-    public $model;
     public $db;
+    public $model;
     public $logger;
 
     /**
@@ -11,32 +11,10 @@ class Model
      */
     public function __construct()
     {
-        $this->setConnectDb();
+        $mysqli   = DB::getInstance();
+        $this->db = $mysqli->getConnection();
+
         $this->logger = new Katzgrau\KLogger\Logger(__DIR__.'/../logs');
-    }
-
-    /**
-     * Set connect to DataBase
-     */
-    private function setConnectDb()
-    {
-        global $connectDB;
-
-        if (empty($connectDB)) {
-            $config    = require(__DIR__ . '/../../config/config.php');
-            $database  = $config['database'];
-            $connectDB = new mysqli(
-                $database['host'],
-                $database['user'],
-                $database['password'],
-                $database['database']
-            );
-        }
-        $this->db = $connectDB;
-        if ($this->db->connect_errno) {
-            printf("Соединение не удалось: %s\n", $this->db->connect_error);
-            exit();
-        }
     }
 
     /**
@@ -63,6 +41,7 @@ class Model
      */
     public function exeSql($sql)
     {
+        $sql          .= " FOR UPDATE;";
         $returnResult = [];
         $result       = $this->db->query($sql, MYSQLI_USE_RESULT);
         if ($result) {
@@ -84,42 +63,34 @@ class Model
      */
     public function updateFinances($table, array $params)
     {
-        $this->db->begin_transaction(MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);
+        $sqlQuery = [];
         foreach ($params as $id => $sum) {
-            $sql = 'UPDATE ' . $table . ' SET `sum` = IF (`sum`-' . $sum . ' < 0, `sum`, `sum`-' . $sum . ')';
-            $sql .= ' WHERE id="' . $this->escapeString($id) . '";' . "\n";
-            $this->db->query($sql);
+            $sql        = 'UPDATE ' . $table . ' SET `sum` = `sum`-' . $sum;
+            $sql        .= ' WHERE id="' . $this->escapeString($id) . '";' . "\n";
+            $sqlQuery[] = trim($sql);
         }
 
-        if (! $this->db->commit()) {
+        if (count($sqlQuery) > 1) {
+            $this->db->begin_transaction(MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);
+        }
+
+        foreach ($sqlQuery as $sql) {
+            $this->db->query($sql);
+            if ($this->db->sqlstate == 45000) {
+                if (count($sqlQuery) > 1) {
+                    $this->db->rollback();
+                }
+                return false;
+            }
+        }
+
+        if (count($sqlQuery) > 1 && ! $this->db->commit()) {
             return false;
         }
 
         return true;
     }
 
-
-    /**
-     * @param $table
-     * @param array $params
-     */
-    public function updateAllTransaction($table, array $params)
-    {
-        $this->db->begin_transaction(MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT);
-        foreach ($params as $id => $param) {
-            $sql           = 'UPDATE ' . $table . ' SET ';
-            $sqlParamArray = $this->getParamSqlQuryArray($param);
-            $sql           .= implode(", ", $sqlParamArray);
-            $sql           .= ' WHERE id="' . $this->escapeString($id) . '";' . "\n";
-            $this->db->query($sql);
-        }
-
-        if (! $this->db->commit()) {
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * @param $param

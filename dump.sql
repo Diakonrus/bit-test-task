@@ -15,7 +15,7 @@
 CREATE TABLE IF NOT EXISTS `finances` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
-  `sum` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `sum` decimal(10,2) NOT NULL DEFAULT '0.00',
   `currency_id` tinyint(2) unsigned NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS `finances` (
 DELETE FROM `finances`;
 /*!40000 ALTER TABLE `finances` DISABLE KEYS */;
 INSERT INTO `finances` (`id`, `user_id`, `sum`, `currency_id`, `created_at`) VALUES
-	(1, 1, 20950.00, 0, '2017-10-26 11:37:57'),
-	(2, 1, 89.50, 1, '2017-10-26 11:37:57'),
-	(3, 1, 225.00, 2, '2017-10-26 11:37:57');
+	(1, 1, 23500.00, 0, '2017-10-26 11:37:57'),
+	(2, 1, 100.00, 1, '2017-10-26 11:37:57'),
+	(3, 1, 50.00, 2, '2017-10-26 11:37:57');
 /*!40000 ALTER TABLE `finances` ENABLE KEYS */;
 
 -- Дамп структуры для таблица test.users
@@ -48,6 +48,30 @@ DELETE FROM `users`;
 INSERT INTO `users` (`id`, `email`, `password`, `created_at`) VALUES
 	(1, 'spn@mail.ru', 'e4d1b9371b671c84cd8b2ba7b696a08d', '2017-10-25 20:32:16');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+
+-- Дамп структуры для триггер test.upd_finances_sum
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `upd_finances_sum` BEFORE UPDATE ON `finances` FOR EACH ROW BEGIN
+           IF NEW.sum < 0 THEN
+						SIGNAL SQLSTATE '45000'
+						SET MESSAGE_TEXT = 'The amount can not be written off; more current amount on the account; table `{SCHEMA_NAME}`.`finances`';
+					 END IF;
+       END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Дамп структуры для триггер test.upd_finances_sum_after
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `upd_finances_sum_after` AFTER UPDATE ON `finances` FOR EACH ROW BEGIN
+           IF OLD.sum < 0 THEN
+						SIGNAL SQLSTATE '45000'
+						SET MESSAGE_TEXT = 'The amount can not be written off; more current amount on the account; table `{SCHEMA_NAME}`.`finances`';
+					 END IF;
+       END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
